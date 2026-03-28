@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify
 import pickle
-import pandas as pd
 import numpy as np
 
 app = Flask(__name__, static_folder='static')
@@ -8,7 +7,6 @@ app = Flask(__name__, static_folder='static')
 model = None
 scaler = None
 le_dict = None
-model_features = ['Food_Item', 'Quantity', 'Category_Encoded', 'Obesity_Risk', 'Diabetes_Risk', 'Cholesterol_Risk']
 
 food_items = [
     "Chicken Breast", "Coke", "Apple", "Burger", "Rice", "Salmon", "Broccoli", 
@@ -65,29 +63,24 @@ def predict_calories(food_item, quantity, protein, carbohydrates, fat, category_
         return None
     
     try:
-        input_data = {
-            'Food_Item': [food_item],
-            'Quantity': [quantity],
-            'Category_Encoded': [category_encoded],
-            'Obesity_Risk': [obesity_risk],
-            'Diabetes_Risk': [diabetes_risk],
-            'Cholesterol_Risk': [cholesterol_risk]
-        }
-        
-        sample_df = pd.DataFrame(input_data)
-        
-        if 'Food_Item' in le_dict and le_dict['Food_Item'] is not None:
+        food_encoded = 0
+        if le_dict and 'Food_Item' in le_dict and le_dict['Food_Item'] is not None:
             try:
                 if food_item in le_dict['Food_Item'].classes_:
-                    sample_df['Food_Item'] = le_dict['Food_Item'].transform(sample_df['Food_Item'])
-                else:
-                    sample_df['Food_Item'] = 0
-            except Exception as e:
-                print(f"Encoding error: {e}")
-                sample_df['Food_Item'] = 0
+                    food_encoded = le_dict['Food_Item'].transform([food_item])[0]
+            except:
+                food_encoded = 0
         
-        sample_df_aligned = sample_df[model_features]
-        sample_scaled = scaler.transform(sample_df_aligned)
+        input_array = np.array([[
+            food_encoded,
+            quantity,
+            category_encoded,
+            obesity_risk,
+            diabetes_risk,
+            cholesterol_risk
+        ]], dtype=float)
+        
+        sample_scaled = scaler.transform(input_array)
         prediction = model.predict(sample_scaled)
         
         return float(prediction[0])
