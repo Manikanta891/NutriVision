@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NutriVision - Calorie Predictor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --primary-light: #d1fae5;
+            --secondary: #6366f1;
+            --bg: #0f172a;
+            --bg-light: #1e293b;
+            --bg-card: #334155;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #475569;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 20px 40px;
+            background: linear-gradient(135deg, var(--bg) 0%, var(--bg-light) 100%);
+        }
+
+        .logo {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            font-weight: 300;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--bg-light);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-title svg {
+            width: 28px;
+            height: 28px;
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .risk-section {
+            background: var(--bg);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 10px;
+        }
+
+        .risk-section h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-muted);
+        }
+
+        .risk-slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: var(--bg-card);
+            outline: none;
+            -webkit-appearance: none;
+            margin: 15px 0;
+        }
+
+        .risk-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+        }
+
+        .risk-value {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-card {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .result-placeholder {
+            padding: 60px 20px;
+            border: 2px dashed var(--border);
+            border-radius: 20px;
+            color: var(--text-muted);
+        }
+
+        .result-placeholder svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .calorie-display {
+            display: none;
+        }
+
+        .calorie-display.active {
+            display: block;
+        }
+
+        .calorie-number {
+            font-size: 5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .calorie-unit {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .nutrition-breakdown {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .nutrition-item {
+            background: var(--bg);
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .nutrition-item .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .nutrition-item .label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 900px) {
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .feature-card {
+            background: var(--bg-light);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--primary-light);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+        }
+
+        .feature-icon svg {
+            width: 28px;
+            height: 28px;
+            color: var(--primary);
+        }
+
+        .feature-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">NutriVision</div>
+        <p class="tagline">AI-Powered Calorie Prediction for Better Health</p>
+    </header>
+
+    <div class="main-content">
+        <div class="card">
+            <h2 class="card-title">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+                Food Details
+            </h2>
+            
+            <form id="predictionForm">
+                <div class="form-group">
+                    <label for="foodItem">Food Item</label>
+                    <select id="foodItem" name="foodItem" required>
+                        <option value="">Select a food item...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="quantity">Quantity (servings)</label>
+                    <input type="number" id="quantity" name="quantity" min="1" max="10" value="1" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="protein">Protein (g)</label>
+                        <input type="number" id="protein" name="protein" min="0" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="carbs">Carbs (g)</label>
+                        <input type="number" id="carbs" name="carbs" min="0" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fat">Fat (g)</label>
+                        <input type="number" id="fat" name="fat" min="0" step="0.1" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Food Category</label>
+                    <select id="category" name="category" required>
+                        <option value="">Select category...</option>
+                        <option value="0">Fast Food</option>
+                        <option value="1">Dairy</option>
+                        <option value="2">Beverages</option>
+                        <option value="3">Protein</option>
+                        <option value="4">Fruits</option>
+                        <option value="5">Vegetables</option>
+                        <option value="6">Grains</option>
+                        <option value="7">Snacks</option>
+                    </select>
+                </div>
+
+                <div class="risk-section">
+                    <h3>Health Risk Factors</h3>
+                    
+                    <div class="form-group">
+                        <label>Obesity Risk Level: <span class="risk-value" id="obesityValue">5</span></label>
+                        <input type="range" class="risk-slider" id="obesityRisk" name="obesityRisk" min="0" max="10" value="5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Diabetes Risk Level: <span class="risk-value" id="diabetesValue">5</span></label>
+                        <input type="range" class="risk-slider" id="diabetesRisk" name="diabetesRisk" min="0" max="10" value="5">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Cholesterol Risk Level: <span class="risk-value" id="cholesterolValue">5</span></label>
+                        <input type="range" class="risk-slider" id="cholesterolRisk" name="cholesterolRisk" min="0" max="10" value="5">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn" id="predictBtn">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    Predict Calories
+                </button>
+            </form>
+        </div>
+
+        <div class="card result-card">
+            <h2 class="card-title">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+                Prediction Result
+            </h2>
+
+            <div class="result-placeholder" id="placeholder">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <p>Enter food details and click predict to see calorie estimation</p>
+            </div>
+
+            <div class="calorie-display" id="resultDisplay">
+                <div class="calorie-number" id="calorieResult">0</div>
+                <div class="calorie-unit">calories estimated</div>
+                
+                <div class="nutrition-breakdown">
+                    <div class="nutrition-item">
+                        <div class="value" id="proteinResult">0g</div>
+                        <div class="label">Protein</div>
+                    </div>
+                    <div class="nutrition-item">
+                        <div class="value" id="carbsResult">0g</div>
+                        <div class="label">Carbs</div>
+                    </div>
+                    <div class="nutrition-item">
+                        <div class="value" id="fatResult">0g</div>
+                        <div class="label">Fat</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="features">
+        <div class="feature-card">
+            <div class="feature-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                </svg>
+            </div>
+            <h3>AI-Powered</h3>
+            <p>Machine learning model trained on thousands of food items</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+            </div>
+            <h3>Instant Results</h3>
+            <p>Get accurate calorie predictions in milliseconds</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                </svg>
+            </div>
+            <h3>Health Focused</h3>
+            <p>Personalized predictions based on your health profile</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>NutriVision - Making healthy eating easier with AI</p>
+    </footer>
+
+    <script>
+        const foodItems = [
+            "Chicken Breast", "Coke", "Apple", "Burger", "Rice", "Salmon", "Broccoli", 
+            "Banana", "Egg", "Pizza", "Pasta", "Steak", "Salad", "Bread", "Milk",
+            "Orange", "Carrot", "Potato", "Cheese", "Yogurt", "Almonds", "Avocado",
+            "Turkey", "Tuna", "Shrimp", "Lobster", "Crab", "Oysters", "Scallops",
+            "Clams", "Mussels", "Cod", "Tilapia", "Sardines", "Anchovies", "Mackerel",
+            "Bass", "Trout", "Catfish", "Pork", "Lamb", "Duck", "Goose", "Venison",
+            "Bison", "Rabbit", "Liver", "Kidney", "Heart", "Tongue", "Tripe",
+            "Sausage", "Bacon", "Ham", "Pepperoni", "Salami", "Mortadella", "Prosciutto",
+            "Corn", "Peas", "Beans", "Lentils", "Chickpeas", "Soybeans", "Tofu",
+            "Tempeh", "Seitan", "Quinoa", "Barley", "Oats", "Wheat", "Rye", "Buckwheat",
+            "Millet", "Bulgur", "Couscous", "Noodles", "Bagel", "Croissant", "Muffin", 
+            "Pancake", "Waffle", "Cereal", "Granola", "Popcorn", "Pretzel", "Crackers", 
+            "Chips", "Salsa", "Guacamole", "Hummus", "Olive Oil", "Butter", "Margarine", 
+            "Mayonnaise", "Ketchup", "Mustard", "Relish", "Pickles", "Olives", "Capers", 
+            "Hot Sauce", "BBQ Sauce", "Soy Sauce", "Fish Sauce", "Oyster Sauce", 
+            "Hoisin Sauce", "Peanut Butter", "Jam", "Honey", "Maple Syrup", "Sugar", 
+            "Chocolate", "Ice Cream", "Cake", "Cookies", "Brownies", "Pie", "Donut",
+            "Pastry", "Candy", "Gum", "Soda", "Juice", "Coffee", "Tea",
+            "Beer", "Wine", "Whiskey", "Vodka", "Rum", "Gin", "Tequila", "Brandy"
+        ];
+
+        const foodItemSelect = document.getElementById('foodItem');
+        foodItems.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item;
+            option.textContent = item;
+            foodItemSelect.appendChild(option);
+        });
+
+        const obesitySlider = document.getElementById('obesityRisk');
+        const diabetesSlider = document.getElementById('diabetesRisk');
+        const cholesterolSlider = document.getElementById('cholesterolRisk');
+        const obesityValue = document.getElementById('obesityValue');
+        const diabetesValue = document.getElementById('diabetesValue');
+        const cholesterolValue = document.getElementById('cholesterolValue');
+
+        obesitySlider.addEventListener('input', () => obesityValue.textContent = obesitySlider.value);
+        diabetesSlider.addEventListener('input', () => diabetesValue.textContent = diabetesSlider.value);
+        cholesterolSlider.addEventListener('input', () => cholesterolValue.textContent = cholesterolSlider.value);
+
+        const form = document.getElementById('predictionForm');
+        const predictBtn = document.getElementById('predictBtn');
+        const placeholder = document.getElementById('placeholder');
+        const resultDisplay = document.getElementById('resultDisplay');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            predictBtn.disabled = true;
+            predictBtn.innerHTML = '<div class="spinner"></div> Predicting...';
+            
+            placeholder.style.display = 'none';
+            resultDisplay.classList.remove('active');
+
+            const formData = {
+                food_item: document.getElementById('foodItem').value,
+                quantity: parseInt(document.getElementById('quantity').value),
+                protein: parseFloat(document.getElementById('protein').value),
+                carbohydrates: parseFloat(document.getElementById('carbs').value),
+                fat: parseFloat(document.getElementById('fat').value),
+                category_encoded: parseInt(document.getElementById('category').value),
+                obesity_risk: parseFloat(document.getElementById('obesityRisk').value),
+                diabetes_risk: parseFloat(document.getElementById('diabetesRisk').value),
+                cholesterol_risk: parseFloat(document.getElementById('cholesterolRisk').value)
+            };
+
+            try {
+                const response = await fetch('/api/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('calorieResult').textContent = Math.round(data.calories);
+                    document.getElementById('proteinResult').textContent = formData.protein + 'g';
+                    document.getElementById('carbsResult').textContent = formData.carbohydrates + 'g';
+                    document.getElementById('fatResult').textContent = formData.fat + 'g';
+                    resultDisplay.classList.add('active');
+                } else {
+                    alert('Prediction failed. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            }
+
+            predictBtn.disabled = false;
+            predictBtn.innerHTML = `
+                <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                </svg>
+                Predict Calories
+            `;
+        });
+    </script>
+</body>
+</html>
