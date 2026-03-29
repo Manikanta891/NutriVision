@@ -39,7 +39,3 @@ htmlcov/
 .mypy_cache/
 .ruff_cache/
 
-calorie_model.pkl 
-scaler.pkl
-encoders.pkl 
-NutriVision_Preprocessed_Dataset.xlsx
