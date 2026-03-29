@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify
+import os
 import pickle
 import numpy as np
 
 app = Flask(__name__, static_folder='static')
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 model = None
 scaler = None
@@ -44,17 +46,21 @@ categories = {
 def load_model():
     global model, scaler, le_dict
     try:
-        with open('calorie_model.pkl', 'rb') as f:
+        with open(os.path.join(BASE_DIR, 'calorie_model.pkl'), 'rb') as f:
             model = pickle.load(f)
-        with open('scaler.pkl', 'rb') as f:
+        with open(os.path.join(BASE_DIR, 'scaler.pkl'), 'rb') as f:
             scaler = pickle.load(f)
-        with open('encoders.pkl', 'rb') as f:
+        with open(os.path.join(BASE_DIR, 'encoders.pkl'), 'rb') as f:
             le_dict = pickle.load(f)
         print("Model loaded successfully!")
         return True
     except Exception as e:
         print(f"Error loading model: {e}")
         return False
+
+
+# Ensure the model is loaded when the module is imported by WSGI servers.
+load_model()
 
 def predict_calories(food_item, quantity, protein, carbohydrates, fat, category_encoded, obesity_risk, diabetes_risk, cholesterol_risk):
     global model, scaler, le_dict
